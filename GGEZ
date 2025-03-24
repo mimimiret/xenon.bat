@@ -9,3 +9,23 @@ local message = Instance.new("Message", game.Workspace)
 message.Text = player.Name .. " kuy hee tad "
 wait(3) 
 message:Destroy()
+local screenGui = Instance.new("ScreenGui", player.PlayerGui)
+local jumpScareImage = Instance.new("ImageLabel", screenGui)
+
+jumpScareImage.Size = UDim2.new(1, 0, 1, 0)
+jumpScareImage.Position = UDim2.new(0, 0, 0, 0)
+jumpScareImage.Image = "1243374081"
+jumpScareImage.Visible = false
+
+wait(5)
+jumpScareImage.Visible = true
+
+
+local jumpScareSound = Instance.new("Sound", player.Character)
+jumpScareSound.SoundId = "rbxassetid://YOUR_SCARY_SOUND_ID" 
+jumpScareSound.Volume = 10
+jumpScareSound:Play(843973677)
+
+wait(2) 
+jumpScareImage:Destroy()
+jumpScareSound:Destroy()
