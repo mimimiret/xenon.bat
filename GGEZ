@@ -2,8 +2,16 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
-wait(10)
-humanoid.JumpPower = 500 
+local function onMove()
+    humanoid.WalkSpeed = 30 -- เพิ่มความเร็วตอนเดิน
+    wait(0.1)
+    humanoid.WalkSpeed = 5 -- แล้วลดกลับ ทำให้เหมือนลื่นไปมา
+end
+
+humanoid.Running:Connect(onMove)
+
+wait(10) 
+humanoid.JumpPower = 500
 humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 wait(2) 
 humanoid.JumpPower = 0 
