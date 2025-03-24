@@ -9,7 +9,6 @@ local function onMove()
 end
 
 humanoid.Running:Connect(onMove)
-
 wait(10) 
 humanoid.JumpPower = 500
 humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
