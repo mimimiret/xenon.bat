@@ -1,1 +1,11 @@
-game.Players.Localplayer:kick()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 50 
+humanoid.JumpPower = 150 
+
+local message = Instance.new("Message", game.Workspace)
+message.Text = player.Name .. " kuy hee tad "
+wait(3) 
+message:Destroy()
