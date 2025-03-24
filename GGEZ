@@ -1,7 +1,10 @@
-local function onMove()
-    humanoid.WalkSpeed = 30 
-    wait(0.1)
-    humanoid.WalkSpeed = 5 
-end
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 
-humanoid.Running:Connect(onMove)
+wait(10)
+humanoid.JumpPower = 500 
+humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+wait(2) 
+humanoid.JumpPower = 0 
+humanoid.WalkSpeed = 2 
