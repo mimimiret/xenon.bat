@@ -2,13 +2,14 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
-humanoid.WalkSpeed = 50 
-humanoid.JumpPower = 150 
+humanoid.WalkSpeed = 100
+humanoid.JumpPower = 500
 
 local message = Instance.new("Message", game.Workspace)
-message.Text = player.Name .. " kuy hee tad "
+message.Text = player.Name .. "พ่อมึงตาย"
 wait(3) 
 message:Destroy()
+
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
 local jumpScareImage = Instance.new("ImageLabel", screenGui)
 
@@ -17,15 +18,15 @@ jumpScareImage.Position = UDim2.new(0, 0, 0, 0)
 jumpScareImage.Image = "1243374081"
 jumpScareImage.Visible = false
 
-wait(5)
+wait(5) 
 jumpScareImage.Visible = true
 
 
 local jumpScareSound = Instance.new("Sound", player.Character)
-jumpScareSound.SoundId = "rbxassetid://YOUR_SCARY_SOUND_ID" 
+jumpScareSound.SoundId = "843973677"
 jumpScareSound.Volume = 10
-jumpScareSound:Play(843973677)
+jumpScareSound:Play()
 
-wait(2) 
+wait(2)
 jumpScareImage:Destroy()
 jumpScareSound:Destroy()
