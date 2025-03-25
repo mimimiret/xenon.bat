@@ -1,28 +1,11 @@
 local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+local mouse = player:GetMouse()
+local button = script.Parent -- Assume this LocalScript is a child of the button
 
-local function onMove()
-    humanoid.WalkSpeed = 30 
-    task.wait(0.1)
-    humanoid.WalkSpeed = 5 
-end
-
-humanoid.Running:Connect(onMove)
-
-task.wait(10) 
-
-humanoid.JumpPower = 500
-humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-
-task.wait(2) 
-
-humanoid.JumpPower = 0 
-humanoid.WalkSpeed = 2 
-
-task.wait(2)
-
-
-if humanoid.Health > 0 then
-    humanoid:TakeDamage(humanoid.MaxHealth)
-end
+button.MouseButton1Click:Connect(function()
+    local part = Instance.new("Part") -- Create a new part
+    part.Size = Vector3.new(4, 1, 2) -- Set the size of the part
+    part.Position = mouse.Hit.p + Vector3.new(0, 5, 0) -- Position it above where the mouse is pointing
+    part.Anchored = true -- Make sure it doesn't fall
+    part.Parent = game.Workspace -- Parent the part to the Workspace
+end)
