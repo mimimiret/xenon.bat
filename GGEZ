@@ -1,21 +1,22 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() 
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() -- โหลด Rayfield
 local Window = Rayfield:CreateWindow({
-   Name = "Chogun kod kak",
-   LoadingTitle = "Chogun kod kak",
-   LoadingSubtitle = "by me",
+   Name = "KUYHEETAD",
+   LoadingTitle = "KUYHEETAD",
+   LoadingSubtitle = "by Sirius",
    Theme = "Default",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = nil,
-      FileName = "Kak Hub"
+      FileName = "HEE Hub"
    },
    KeySystem = false
 })
 
-local Tab = Window:CreateTab("Main", 4483362458) 
+local Tab = Window:CreateTab("Main", 4483362458) -- สร้างแท็บหลัก
 
 local Section = Tab:CreateSection("Menu Options")
 
+-- ฟังก์ชัน ESP
 local function EnableESP()
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -25,7 +26,7 @@ local function EnableESP()
             if player ~= LocalPlayer then
                 local character = player.Character
                 if character and character:FindFirstChild("HumanoidRootPart") then
-                    character.HumanoidRootPart.Transparency = 0.5 
+                    character.HumanoidRootPart.Transparency = 0.5 -- ทำให้โปร่งใส
                 end
             end
         end
@@ -36,18 +37,17 @@ local function EnableESP()
     Players.PlayerAdded:Connect(function(player)
         player.CharacterAdded:Connect(updateVisibility)
     end)
-
-    Players.PlayerRemoving:Connect(updateVisibility)
 end
 
+-- ปุ่มเปิด ESP
 Tab:AddButton({
    Name = "Enable ESP",
-   Callback = function()
-       EnableESP()
-   end,
+   Callback = EnableESP
 })
 
+-- ฟังก์ชัน Fly Hack
 local flying = false
+local bodyVelocity
 local function ToggleFly()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -56,70 +56,67 @@ local function ToggleFly()
     if humanoidRootPart then
         if not flying then
             flying = true
-            local bodyVelocity = Instance.new("BodyVelocity", humanoidRootPart)
-            bodyVelocity.Velocity = Vector3.new(0, 50, 0) 
+            bodyVelocity = Instance.new("BodyVelocity", humanoidRootPart)
+            bodyVelocity.Velocity = Vector3.new(0, 50, 0) -- บินขึ้นไป
             bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
         else
             flying = false
-            for _, v in pairs(humanoidRootPart:GetChildren()) do
-                if v:IsA("BodyVelocity") then
-                    v:Destroy()
-                end
+            if bodyVelocity then
+                bodyVelocity:Destroy()
+                bodyVelocity = nil
             end
         end
     end
 end
 
+-- ปุ่มเปิด Fly Hack
 Tab:AddButton({
    Name = "Fly Hack",
-   Callback = function()
-       ToggleFly()
-   end,
+   Callback = ToggleFly
 })
 
+-- ฟังก์ชัน Speed Hack
 local speedEnabled = false
 local function ToggleSpeed()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChild("Humanoid")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
     
     if humanoid then
         if not speedEnabled then
             speedEnabled = true
-            humanoid.WalkSpeed = 100 
+            humanoid.WalkSpeed = 100 -- ปรับความเร็วเดิน
         else
             speedEnabled = false
-            humanoid.WalkSpeed = 16 
+            humanoid.WalkSpeed = 16 -- กลับสู่ค่าปกติ
         end
     end
 end
 
+-- ปุ่มเปิด Speed Hack
 Tab:AddButton({
    Name = "Speed Hack",
-   Callback = function()
-       ToggleSpeed()
-   end,
+   Callback = ToggleSpeed
 })
 
+-- ปุ่มตัวเลือกอื่น ๆ
 Tab:AddButton({
    Name = "Option 2",
    Callback = function()
        print("Option 2 selected")
-   end,
+   end
 })
 
+-- สวิตช์เปิด/ปิดฟีเจอร์
 Tab:AddToggle({
    Name = "Enable Feature",
    Default = false,
    Callback = function(state)
-       if state then
-           print("Feature Enabled")
-       else
-           print("Feature Disabled")
-       end
-   end,
+       print(state and "Feature Enabled" or "Feature Disabled")
+   end
 })
 
+-- สไลเดอร์ปรับค่า
 Tab:AddSlider({
    Name = "Set Value",
    Min = 1,
@@ -127,5 +124,5 @@ Tab:AddSlider({
    Default = 50,
    Callback = function(value)
        print("Slider Value: " .. value)
-   end,
+   end
 })
