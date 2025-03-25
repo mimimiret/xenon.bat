@@ -1,13 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() 
 local Window = Rayfield:CreateWindow({
-   Name = "KUYHEETAD",
-   LoadingTitle = "KUYHEETAD",
-   LoadingSubtitle = "by Sirius",
+   Name = "Chogun kod kak",
+   LoadingTitle = "Chogun kod kak",
+   LoadingSubtitle = "by me",
    Theme = "Default",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = nil,
-      FileName = "HEE Hub"
+      FileName = "Kak Hub"
    },
    KeySystem = false
 })
