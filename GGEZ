@@ -1,4 +1,4 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() -- โหลด Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() 
 local Window = Rayfield:CreateWindow({
    Name = "KUYHEETAD",
    LoadingTitle = "KUYHEETAD",
@@ -12,11 +12,10 @@ local Window = Rayfield:CreateWindow({
    KeySystem = false
 })
 
-local Tab = Window:CreateTab("Main", 4483362458) -- สร้างแท็บหลัก
+local Tab = Window:CreateTab("Main", 4483362458) 
 
 local Section = Tab:CreateSection("Menu Options")
 
--- ฟังก์ชัน ESP
 local function EnableESP()
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -26,7 +25,7 @@ local function EnableESP()
             if player ~= LocalPlayer then
                 local character = player.Character
                 if character and character:FindFirstChild("HumanoidRootPart") then
-                    character.HumanoidRootPart.Transparency = 0.5 -- ทำให้โปร่งใส
+                    character.HumanoidRootPart.Transparency = 0.5 
                 end
             end
         end
@@ -41,7 +40,6 @@ local function EnableESP()
     Players.PlayerRemoving:Connect(updateVisibility)
 end
 
--- ปุ่มเปิด ESP
 Tab:AddButton({
    Name = "Enable ESP",
    Callback = function()
@@ -49,7 +47,60 @@ Tab:AddButton({
    end,
 })
 
--- ปุ่มตัวเลือกอื่น ๆ
+local flying = false
+local function ToggleFly()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    
+    if humanoidRootPart then
+        if not flying then
+            flying = true
+            local bodyVelocity = Instance.new("BodyVelocity", humanoidRootPart)
+            bodyVelocity.Velocity = Vector3.new(0, 50, 0) 
+            bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+        else
+            flying = false
+            for _, v in pairs(humanoidRootPart:GetChildren()) do
+                if v:IsA("BodyVelocity") then
+                    v:Destroy()
+                end
+            end
+        end
+    end
+end
+
+Tab:AddButton({
+   Name = "Fly Hack",
+   Callback = function()
+       ToggleFly()
+   end,
+})
+
+local speedEnabled = false
+local function ToggleSpeed()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChild("Humanoid")
+    
+    if humanoid then
+        if not speedEnabled then
+            speedEnabled = true
+            humanoid.WalkSpeed = 100 
+        else
+            speedEnabled = false
+            humanoid.WalkSpeed = 16 
+        end
+    end
+end
+
+Tab:AddButton({
+   Name = "Speed Hack",
+   Callback = function()
+       ToggleSpeed()
+   end,
+})
+
 Tab:AddButton({
    Name = "Option 2",
    Callback = function()
@@ -57,7 +108,6 @@ Tab:AddButton({
    end,
 })
 
--- สวิตช์เปิด/ปิดฟีเจอร์
 Tab:AddToggle({
    Name = "Enable Feature",
    Default = false,
@@ -70,7 +120,6 @@ Tab:AddToggle({
    end,
 })
 
--- สไลเดอร์ปรับค่า
 Tab:AddSlider({
    Name = "Set Value",
    Min = 1,
