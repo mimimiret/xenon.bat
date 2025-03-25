@@ -16,26 +16,39 @@ local Tab = Window:CreateTab("Main", 4483362458) -- สร้างแท็บ�
 
 local Section = Tab:CreateSection("Menu Options")
 
--- ฟังก์ชัน ESP
+-- ปรับปรุงฟังก์ชัน ESP
 local function EnableESP()
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
-
-    local function updateVisibility()
+    
+    local function createESP(character)
+        if character and not character:FindFirstChild("ESPBox") then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "ESPBox"
+            highlight.Parent = character
+            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- สีแดง
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        end
+    end
+    
+    local function updateESP()
         for _, player in ipairs(Players:GetPlayers()) do
             if player ~= LocalPlayer then
                 local character = player.Character
-                if character and character:FindFirstChild("HumanoidRootPart") then
-                    character.HumanoidRootPart.Transparency = 0.5 -- ทำให้โปร่งใส
+                if character then
+                    createESP(character)
                 end
             end
         end
     end
-
-    updateVisibility()
-
+    
+    updateESP()
+    
     Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(updateVisibility)
+        player.CharacterAdded:Connect(function(character)
+            createESP(character)
+        end)
     end)
 end
 
@@ -97,6 +110,52 @@ end
 Tab:AddButton({
    Name = "Speed Hack",
    Callback = ToggleSpeed
+})
+
+-- ฟังก์ชัน Jump Hack
+local jumpEnabled = false
+local function ToggleJump()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    
+    if humanoid then
+        if not jumpEnabled then
+            jumpEnabled = true
+            humanoid.JumpPower = 150 -- เพิ่มความสามารถในการกระโดด
+        else
+            jumpEnabled = false
+            humanoid.JumpPower = 50 -- กลับสู่ค่าปกติ
+        end
+    end
+end
+
+-- ปุ่มเปิด Jump Hack
+Tab:AddButton({
+   Name = "Jump Hack",
+   Callback = ToggleJump
+})
+
+-- ฟังก์ชัน NoClip (เดินทะลุ)
+local noclipEnabled = false
+local function ToggleNoClip()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    
+    if character then
+        for _, part in ipairs(character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = not noclipEnabled
+            end
+        end
+        noclipEnabled = not noclipEnabled
+    end
+end
+
+-- ปุ่มเปิด NoClip
+Tab:AddButton({
+   Name = "NoClip",
+   Callback = ToggleNoClip
 })
 
 -- ปุ่มตัวเลือกอื่น ๆ
