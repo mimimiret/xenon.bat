@@ -40,7 +40,7 @@ local function EnableESP()
 end
 
 -- ปุ่มเปิด ESP
-Tab:AddButton({
+Tab:CreatedButton({
    Name = "Enable ESP",
    Callback = EnableESP
 })
