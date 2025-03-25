@@ -1,11 +1,100 @@
-local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
-local button = script.Parent -- Assume this LocalScript is a child of the button
+local Window = Rayfield:CreateWindow({
+   Name = "KUYHEETAD",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "KUYHEETAD",
+   LoadingSubtitle = "by Sirius",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
-button.MouseButton1Click:Connect(function()
-    local part = Instance.new("Part") -- Create a new part
-    part.Size = Vector3.new(4, 1, 2) -- Set the size of the part
-    part.Position = mouse.Hit.p + Vector3.new(0, 5, 0) -- Position it above where the mouse is pointing
-    part.Anchored = true -- Make sure it doesn't fall
-    part.Parent = game.Workspace -- Parent the part to the Workspace
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "HEE Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+local Tab = Window:CreateTab("Main", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("Menu Options")
+
+-- Adding buttons to the section
+Section:AddButton({
+   Name = "ESP", -- Name of the button
+   Callback = function()
+       print("local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function updateVisibility()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local character = player.Character
+            if character then
+                
+                character.HumanoidRootPart.Transparency = 0.5 
+            end
+        end
+    end
+end
+
+updateVisibility()
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        updateVisibility()
+    end)
 end)
+
+Players.PlayerRemoving:Connect(function(player)
+    updateVisibility()
+end)") -- Action to perform when button is clicked
+   end,
+})
+
+Section:AddButton({
+   Name = "Option 2",
+   Callback = function()
+       print("Option 2 selected")
+   end,
+})
+
+-- Adding a toggle
+Section:AddToggle({
+   Name = "Enable Feature",
+   Default = false, -- Default state of the toggle
+   Callback = function(state)
+       if state then
+           print("Feature Enabled")
+       else
+           print("Feature Disabled")
+       end
+   end,
+})
+
+-- Adding a slider
+Section:AddSlider({
+   Name = "Set Value",
+   Min = 1, -- Minimum value of the slider
+   Max = 100, -- Maximum value of the slider
+   Default = 50, -- Default value
+   Callback = function(value)
+       print("Slider Value: " .. value)
+   end,
+})
