@@ -1,22 +1,22 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() -- โหลด Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() -- Load Rayfield
 local Window = Rayfield:CreateWindow({
-   Name = "KUYHEETAD",
-   LoadingTitle = "KUYHEETAD",
-   LoadingSubtitle = "by Sirius",
-   Theme = "Default",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "HEE Hub"
-   },
-   KeySystem = false
+    Name = "KUYHEETAD",
+    LoadingTitle = "KUYHEETAD",
+    LoadingSubtitle = "by Sirius",
+    Theme = "Default",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "HEE Hub"
+    },
+    KeySystem = false
 })
 
-local Tab = Window:CreateTab("Main", 4483362458) -- สร้างแท็บหลัก
+local Tab = Window:CreateTab("Main", 4483362458) -- Create Main Tab
 
 local Section = Tab:CreateSection("Menu Options")
 
--- ปรับปรุงฟังก์ชัน ESP
+-- Enable ESP Function
 local function EnableESP()
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -26,7 +26,7 @@ local function EnableESP()
             local highlight = Instance.new("Highlight")
             highlight.Name = "ESPBox"
             highlight.Parent = character
-            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- สีแดง
+            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red color
             highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
             highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
         end
@@ -52,13 +52,13 @@ local function EnableESP()
     end)
 end
 
--- ปุ่มเปิด ESP
-Tab:CreatedButton({
-   Name = "Enable ESP",
-   Callback = EnableESP
+-- Button to Enable ESP
+Tab:AddButton({
+    Name = "Enable ESP",
+    Callback = EnableESP
 })
 
--- ฟังก์ชัน Fly Hack
+-- Fly Hack Function
 local flying = false
 local bodyVelocity
 local function ToggleFly()
@@ -70,7 +70,7 @@ local function ToggleFly()
         if not flying then
             flying = true
             bodyVelocity = Instance.new("BodyVelocity", humanoidRootPart)
-            bodyVelocity.Velocity = Vector3.new(0, 50, 0) -- บินขึ้นไป
+            bodyVelocity.Velocity = Vector3.new(0, 50, 0) -- Fly upwards
             bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
         else
             flying = false
@@ -82,13 +82,13 @@ local function ToggleFly()
     end
 end
 
--- ปุ่มเปิด Fly Hack
+-- Button to Toggle Fly Hack
 Tab:AddButton({
-   Name = "Fly Hack",
-   Callback = ToggleFly
+    Name = "Fly Hack",
+    Callback = ToggleFly
 })
 
--- ฟังก์ชัน Speed Hack
+-- Speed Hack Function
 local speedEnabled = false
 local function ToggleSpeed()
     local player = game.Players.LocalPlayer
@@ -98,21 +98,21 @@ local function ToggleSpeed()
     if humanoid then
         if not speedEnabled then
             speedEnabled = true
-            humanoid.WalkSpeed = 100 -- ปรับความเร็วเดิน
+            humanoid.WalkSpeed = 100 -- Increase walk speed
         else
             speedEnabled = false
-            humanoid.WalkSpeed = 16 -- กลับสู่ค่าปกติ
+            humanoid.WalkSpeed = 16 -- Reset to default
         end
     end
 end
 
--- ปุ่มเปิด Speed Hack
+-- Button to Toggle Speed Hack
 Tab:AddButton({
-   Name = "Speed Hack",
-   Callback = ToggleSpeed
+    Name = "Speed Hack",
+    Callback = ToggleSpeed
 })
 
--- ฟังก์ชัน Jump Hack
+-- Jump Hack Function
 local jumpEnabled = false
 local function ToggleJump()
     local player = game.Players.LocalPlayer
@@ -122,66 +122,66 @@ local function ToggleJump()
     if humanoid then
         if not jumpEnabled then
             jumpEnabled = true
-            humanoid.JumpPower = 150 -- เพิ่มความสามารถในการกระโดด
+            humanoid.JumpPower = 150 -- Increase jump power
         else
             jumpEnabled = false
-            humanoid.JumpPower = 50 -- กลับสู่ค่าปกติ
+            humanoid.JumpPower = 50 -- Reset to default
         end
     end
 end
 
--- ปุ่มเปิด Jump Hack
+-- Button to Toggle Jump Hack
 Tab:AddButton({
-   Name = "Jump Hack",
-   Callback = ToggleJump
+    Name = "Jump Hack",
+    Callback = ToggleJump
 })
 
--- ฟังก์ชัน NoClip (เดินทะลุ)
+-- NoClip Function
 local noclipEnabled = false
 local function ToggleNoClip()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     
     if character then
+        noclipEnabled = not noclipEnabled
         for _, part in ipairs(character:GetChildren()) do
             if part:IsA("BasePart") then
                 part.CanCollide = not noclipEnabled
             end
         end
-        noclipEnabled = not noclipEnabled
     end
 end
 
--- ปุ่มเปิด NoClip
+-- Button to Toggle NoClip
 Tab:AddButton({
-   Name = "NoClip",
-   Callback = ToggleNoClip
+    Name = "NoClip",
+    Callback = ToggleNoClip
 })
 
--- ปุ่มตัวเลือกอื่น ๆ
+-- Other Options
 Tab:AddButton({
-   Name = "Option 2",
-   Callback = function()
-       print("Option 2 selected")
-   end
+    Name = "Option 2",
+    Callback = function()
+        print("Option 2 selected")
+    end
 })
 
--- สวิตช์เปิด/ปิดฟีเจอร์
+-- Toggle Feature
 Tab:AddToggle({
-   Name = "Enable Feature",
-   Default = false,
-   Callback = function(state)
-       print(state and "Feature Enabled" or "Feature Disabled")
-   end
+    Name = "Enable Feature",
+    Default = false,
+    Callback = function(state)
+        print(state and "Feature Enabled" or "Feature Disabled")
+    end
 })
 
--- สไลเดอร์ปรับค่า
+-- Slider to Set Value
 Tab:AddSlider({
-   Name = "Set Value",
-   Min = 1,
-   Max = 100,
-   Default = 50,
-   Callback = function(value)
-       print("Slider Value: " .. value)
-   end
+    Name = "Set Value",
+    Min = 1,
+    Max = 100,
+    Default = 50,
+    Callback = function(value)
+        print("Slider Value: " .. value)
+    end
 })
