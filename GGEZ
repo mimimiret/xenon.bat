@@ -202,7 +202,57 @@ local ToggleFly = FarmTab:CreateToggle({
    Flag = "FlyToggle",
    Callback = function(Value)
        flyEnabled = Value
-       -- Implement fly functionality here
+    local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local flying = false
+local flySpeed = 50 -- Adjust this value for speed
+
+-- Function to toggle flying
+local function toggleFly()
+    flying = not flying
+    if flying then
+        humanoid.PlatformStand = true -- Disable normal physics
+        while flying do
+            wait(0.1)
+            local direction = Vector3.new(0, 0, 0)
+
+            -- Get user input for flying
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                direction = direction + workspace.CurrentCamera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                direction = direction - workspace.CurrentCamera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                direction = direction - workspace.CurrentCamera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                direction = direction + workspace.CurrentCamera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                direction = direction + Vector3.new(0, 1, 0) -- Fly up
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+                direction = direction - Vector3.new(0, 1, 0) -- Fly down
+            end
+
+            -- Move the character
+            character:TranslateBy(direction * flySpeed * 0.1)
+        end
+        humanoid.PlatformStand = false -- Re-enable normal physics
+    end
+end
+
+-- Bind the toggle function to a key (e.g., "F" key)
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.F then
+        toggleFly()
+    end
+end)
    end,
 })
 
