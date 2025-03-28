@@ -185,13 +185,73 @@ local ToggleNoclip = FarmTab:CreateToggle({
            -- Enable noclip
            character.Humanoid.Changed:Connect(function()
                if noclipEnabled then
-                   character.Humanoid:ChangeState(11) -- Change state to noclip
-               end
-           end)
-       else
-           -- Disable noclip
-           -- Implement logic to reset to normal state
-       end
+                   local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local noclipEnabled = false
+
+-- Function to toggle noclip
+local function toggleNoclip()
+    noclipEnabled = not noclipEnabled
+    if noclipEnabled then
+        humanoid.PlatformStand = true -- Disable normal physics
+
+        -- Disable collision
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+
+        -- Update position to allow noclip movement
+        while noclipEnabled do
+            wait()
+            local camera = workspace.CurrentCamera
+            local moveDirection = Vector3.new(0, 0, 0)
+
+            -- Check for movement inputs
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                moveDirection = moveDirection + camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                moveDirection = moveDirection - camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                moveDirection = moveDirection - camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                moveDirection = moveDirection + camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                moveDirection = moveDirection + Vector3.new(0, 1, 0) -- Move up
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+                moveDirection = moveDirection - Vector3.new(0, 1, 0) -- Move down
+            end
+
+            -- Move the character
+            character:TranslateBy(moveDirection * 5 * wait()) -- Adjust speed as needed
+        end
+
+        -- Re-enable collision
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+
+        humanoid.PlatformStand = false -- Re-enable normal physics
+    end
+end
+
+-- Bind the toggle function to a key (e.g., "N" key)
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.N then
+        toggleNoclip()
+    end
+end)
    end,
 })
 
