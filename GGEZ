@@ -1,187 +1,269 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))() -- Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-    Name = "KUYHEETAD",
-    LoadingTitle = "KUYHEETAD",
-    LoadingSubtitle = "by Sirius",
-    Theme = "Default",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = nil,
-        FileName = "HEE Hub"
-    },
-    KeySystem = false
+   Name = "GGEZ",
+   Icon = 0,
+   LoadingTitle = "GGEZ",
+   LoadingSubtitle = "by GGEZ",
+   Theme = "Default",
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "GGEZ"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = false,
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"Hello"}
+   }
 })
 
-local Tab = Window:CreateTab("Main", 4483362458) -- Create Main Tab
+local MainTab = Window:CreateTab("Main", 4483362458)
+local FarmTab = Window:CreateTab("Farm", 4483362458)
 
-local Section = Tab:CreateSection("Menu Options")
-
--- Enable ESP Function
-local function EnableESP()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    
-    local function createESP(character)
-        if character and not character:FindFirstChild("ESPBox") then
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "ESPBox"
-            highlight.Parent = character
-            highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red color
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        end
-    end
-    
-    local function updateESP()
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                local character = player.Character
-                if character then
-                    createESP(character)
-                end
-            end
-        end
-    end
-    
-    updateESP()
-    
-    Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(character)
-            createESP(character)
-        end)
-    end)
-end
-
--- Button to Enable ESP
-Tab:AddButton({
-    Name = "Enable ESP",
-    Callback = EnableESP
-})
-
--- Fly Hack Function
-local flying = false
-local bodyVelocity
-local function ToggleFly()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    
-    if humanoidRootPart then
-        if not flying then
-            flying = true
-            bodyVelocity = Instance.new("BodyVelocity", humanoidRootPart)
-            bodyVelocity.Velocity = Vector3.new(0, 50, 0) -- Fly upwards
-            bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
-        else
-            flying = false
-            if bodyVelocity then
-                bodyVelocity:Destroy()
-                bodyVelocity = nil
-            end
-        end
-    end
-end
-
--- Button to Toggle Fly Hack
-Tab:AddButton({
-    Name = "Fly Hack",
-    Callback = ToggleFly
-})
-
--- Speed Hack Function
-local speedEnabled = false
-local function ToggleSpeed()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    
-    if humanoid then
-        if not speedEnabled then
-            speedEnabled = true
-            humanoid.WalkSpeed = 100 -- Increase walk speed
-        else
-            speedEnabled = false
-            humanoid.WalkSpeed = 16 -- Reset to default
-        end
-    end
-end
-
--- Button to Toggle Speed Hack
-Tab:AddButton({
-    Name = "Speed Hack",
-    Callback = ToggleSpeed
-})
-
--- Jump Hack Function
-local jumpEnabled = false
-local function ToggleJump()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    
-    if humanoid then
-        if not jumpEnabled then
-            jumpEnabled = true
-            humanoid.JumpPower = 150 -- Increase jump power
-        else
-            jumpEnabled = false
-            humanoid.JumpPower = 50 -- Reset to default
-        end
-    end
-end
-
--- Button to Toggle Jump Hack
-Tab:AddButton({
-    Name = "Jump Hack",
-    Callback = ToggleJump
-})
-
--- NoClip Function
+-- Variables for features
+local autoFarming = false
+local bringMobEnabled = false
+local espEnabled = false
+local speedHackEnabled = false
+local jumpHackEnabled = false
 local noclipEnabled = false
-local function ToggleNoClip()
+local flyEnabled = false
+local aimbotEnabled = false
+local flySpeed = 50
+
+-- Status labels
+local StatusLabel = FarmTab:CreateLabel("Auto-Farm Status: Off")
+local BringMobLabel = FarmTab:CreateLabel("Bring Mob Status: Off")
+local EspLabel = FarmTab:CreateLabel("ESP Status: Off")
+local SpeedHackLabel = FarmTab:CreateLabel("Speed Hack Status: Off")
+local JumpHackLabel = FarmTab:CreateLabel("Jump Hack Status: Off")
+local NoclipLabel = FarmTab:CreateLabel("Noclip Status: Off")
+local FlyLabel = FarmTab:CreateLabel("Fly Status: Off")
+local AimbotLabel = FarmTab:CreateLabel("Aimbot Status: Off")
+
+-- Function to find the nearest target
+local function getNearestTarget()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-    
-    if character then
-        noclipEnabled = not noclipEnabled
-        for _, part in ipairs(character:GetChildren()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = not noclipEnabled
+    local closestTarget = nil
+    local closestDistance = math.huge
+
+    for _, target in pairs(game.Players:GetPlayers()) do
+        if target ~= player and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (target.Character.HumanoidRootPart.Position - character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closestTarget = target
             end
         end
     end
+
+    return closestTarget
 end
 
--- Button to Toggle NoClip
-Tab:AddButton({
-    Name = "NoClip",
-    Callback = ToggleNoClip
+-- Function to aim at the target
+local function aimAtTarget(target)
+    local player = game.Players.LocalPlayer
+    local camera = workspace.CurrentCamera
+    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        local targetPosition = target.Character.HumanoidRootPart.Position
+        local direction = (targetPosition - camera.CFrame.Position).unit
+        camera.CFrame = CFrame.new(camera.CFrame.Position, camera.CFrame.Position + direction)
+    end
+end
+
+-- Aimbot loop
+local function aimbotLoop()
+    while aimbotEnabled do
+        local target = getNearestTarget()
+        aimAtTarget(target)
+        wait(0.1) -- Adjust the aim frequency as needed
+    end
+end
+
+-- Toggle for Aimbot
+local ToggleAimbot = FarmTab:CreateToggle({
+   Name = "Aimbot",
+   CurrentValue = false,
+   Flag = "AimbotToggle",
+   Callback = function(Value)
+       aimbotEnabled = Value
+       if Value then
+           AimbotLabel:SetText("Aimbot Status: On")
+           aimbotLoop() -- Start the aimbot loop
+       else
+           AimbotLabel:SetText("Aimbot Status: Off")
+           print("Aimbot disabled.")
+       end
+   end,
 })
 
--- Other Options
-Tab:AddButton({
-    Name = "Option 2",
-    Callback = function()
-        print("Option 2 selected")
+-- Function to bring mobs (example)
+local function bringMob()
+    if bringMobEnabled then
+        -- Logic to bring the mob to the player
+        print("Bringing mob...")
     end
+end
+
+-- Function to start auto-farming
+local function startAutoFarm()
+    autoFarming = true
+    StatusLabel:SetText("Auto-Farm Status: On")
+    while autoFarming do
+        bringMob()  -- Call bringMob function if enabled
+        wait(2) -- Adjust the wait time as necessary.
+    end
+end
+
+-- Function to stop auto-farming
+local function stopAutoFarm()
+    autoFarming = false
+    StatusLabel:SetText("Auto-Farm Status: Off")
+end
+
+-- Toggle to start/stop the auto-farm
+local ToggleAutoFarm = FarmTab:CreateToggle({
+   Name = "Auto-Farm Mobs",
+   CurrentValue = false,
+   Flag = "AutoFarmToggle",
+   Callback = function(Value)
+       if Value then
+           startAutoFarm()
+       else
+           stopAutoFarm()
+       end
+   end,
 })
 
--- Toggle Feature
-Tab:AddToggle({
-    Name = "Enable Feature",
-    Default = false,
-    Callback = function(state)
-        print(state and "Feature Enabled" or "Feature Disabled")
-    end
+-- Toggle for bringing mobs
+local ToggleBringMob = FarmTab:CreateToggle({
+   Name = "Bring Mob",
+   CurrentValue = false,
+   Flag = "BringMobToggle",
+   Callback = function(Value)
+       bringMobEnabled = Value
+       if Value then
+           BringMobLabel:SetText("Bring Mob Status: On")
+       else
+           BringMobLabel:SetText("Bring Mob Status: Off")
+       end
+   end,
 })
 
--- Slider to Set Value
-Tab:AddSlider({
-    Name = "Set Value",
-    Min = 1,
-    Max = 100,
-    Default = 50,
-    Callback = function(value)
-        print("Slider Value: " .. value)
-    end
+-- Toggle for ESP
+local ToggleESP = FarmTab:CreateToggle({
+   Name = "ESP for Players and Mobs",
+   CurrentValue = false,
+   Flag = "ESPToggle",
+   Callback = function(Value)
+       espEnabled = Value
+       -- Add ESP toggle functionality here (similar to the previous implementation)
+   end,
+})
+
+-- Toggle for Speed Hack
+local ToggleSpeedHack = FarmTab:CreateToggle({
+   Name = "Speed Hack",
+   CurrentValue = false,
+   Flag = "SpeedHackToggle",
+   Callback = function(Value)
+       speedHackEnabled = Value
+       if Value then
+           SpeedHackLabel:SetText("Speed Hack Status: On")
+           game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50 -- Set to desired speed
+       else
+           SpeedHackLabel:SetText("Speed Hack Status: Off")
+           game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 -- Reset to default speed
+       end
+   end,
+})
+
+-- Toggle for Jump Hack
+local ToggleJumpHack = FarmTab:CreateToggle({
+   Name = "Jump Hack",
+   CurrentValue = false,
+   Flag = "JumpHackToggle",
+   Callback = function(Value)
+       jumpHackEnabled = Value
+       if Value then
+           JumpHackLabel:SetText("Jump Hack Status: On")
+           game.Players.LocalPlayer.Character.Humanoid.JumpPower = 100 -- Set to desired jump power
+       else
+           JumpHackLabel:SetText("Jump Hack Status: Off")
+           game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50 -- Reset to default jump power
+       end
+   end,
+})
+
+-- Toggle for Noclip
+local ToggleNoclip = FarmTab:CreateToggle({
+   Name = "Noclip",
+   CurrentValue = false,
+   Flag = "NoclipToggle",
+   Callback = function(Value)
+       noclipEnabled = Value
+       -- Add noclip functionality here (similar to the previous implementation)
+   end,
+})
+
+-- Toggle for Fly
+local ToggleFly = FarmTab:CreateToggle({
+   Name = "Fly",
+   CurrentValue = false,
+   Flag = "FlyToggle",
+   Callback = function(Value)
+       flyEnabled = Value
+       -- Add fly functionality here (similar to the previous implementation)
+   end,
+})
+
+-- Slider for an additional feature
+local Slider = FarmTab:CreateSlider({
+   Name = "Slider Example",
+   Range = {0, 100},
+   Increment = 10,
+   Suffix = "Value",
+   CurrentValue = 10,
+   Flag = "Slider1",
+   Callback = function(Value)
+       print("Slider value: " .. Value)
+       -- Add logic here to use the slider value for any specific feature
+   end,
+})
+
+-- Example button to execute a specific action
+local ActionButton = FarmTab:CreateButton({
+   Name = "Execute Action",
+   Callback = function()
+       print("Executing action...")
+       -- Add the specific action you want to perform here
+   end,
+})
+
+-- Another toggle for a different farming feature (example)
+local ToggleFeatureX = FarmTab:CreateToggle({
+   Name = "Feature X",
+   CurrentValue = false,
+   Flag = "FeatureXToggle",
+   Callback = function(Value)
+       if Value then
+           print("Feature X enabled.")
+           -- Add logic for Feature X here
+       else
+           print("Feature X disabled.")
+       end
+   end,
 })
